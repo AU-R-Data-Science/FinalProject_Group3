@@ -5,7 +5,7 @@ Version: 1.0.0
 Authors@R: c(
     person("Cole", "Kenney", role = c("aut","cre")),
     person("Maritza", "Spott", role = "aut"),
-    person("Parker", "Elliott", role = "aut")
+    person("Juliet", "Petrisor", role = "aut")
     )
 Description: Final Project for STAT 5210  - Fall 2022 at Auburn University. This package implements logistic regression.
 License: NA
