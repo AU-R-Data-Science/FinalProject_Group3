@@ -1,0 +1,16 @@
+Package: logisiticregression
+Type: Package
+Title: Logistic Regression
+Version: 1.0.0
+Authors@R: c(
+    person("Cole", "Kenney", role = c("aut","cre")),
+    person("Maritza", "Spott", role = "aut"),
+    person("Parker", "Elliott", role = "aut")
+    )
+Description: Final Project for STAT 5210  - Fall 2022 at Auburn University. This package implements logistic regression.
+License: NA
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.2
+
+
