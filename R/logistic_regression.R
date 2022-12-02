@@ -109,7 +109,9 @@ plot_metrics_starter_function <- function(predictor, response) {
   
   for(i in seq(from = 0.1, to = 0.9, by = 0.1)) {
     plot_df[nrows(plot_df)+1, ] <- c(i, confusion_matrix_and_metrics(predictor, response, i)$prev)
-    }
+  }
+  
+  #plot data frame here
 }
 
 #Starter function for plotting confusion matrix metrics. Please create plotting code / edit descriptions / create function for each metric. Example is using prevalence.
