@@ -7,7 +7,18 @@ initial_beta_least_squares <- function(X, y) {
   return (solve(t(X) %*% X) %*% t(X) %*% y)
 }
 
-#function for generating β^ - vector of logistic regression coefficients
+#'Logistic Regression Coefficients Generation
+#'
+#'@description
+#'This function generates optimal coefficients for logistic regression.
+#'
+#'@param predictor A matrix containing values of the predictors.
+#'@param response A vector containing values of the responses.
+#'
+#'@return A vector containing the optimal set of coefficients for logistic regression.
+#'
+#'@author Cole Kenney
+#'@export
 beta_hat <- function(predictor, response) {
   return (optim(get_initial_beta(predictor, response), log_regression, X = predictor, y = response)$par)
 }
@@ -17,8 +28,8 @@ beta_hat <- function(predictor, response) {
 #' @description 
 #' This function performs logistic regression and then computes a confusion matrix and some common metrics from the confusion matrix.
 #' 
-#' @param predictor A matrix containing values of the predictors
-#' @param response A vector containing values of the responses
+#' @param predictor A matrix containing values of the predictors.
+#' @param response A vector containing values of the responses.
 #' @param cutoff A double value - predictions greater than the cutoff are set to one, predictions less than the cutoff are set to zero.
 #' 
 #' @return A list containing the following values:
@@ -68,6 +79,8 @@ confusion_matrix_and_metrics <- function(predictor, response, cutoff) {
               "fdr" = fdr, 
               "dor" = dor))
 }
+
+
 
 #plotting metrics starter function - with prevalence as example
 plot_metrics_starter_function <- function(predictor, response) {

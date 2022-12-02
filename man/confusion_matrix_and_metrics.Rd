@@ -7,9 +7,9 @@
 confusion_matrix_and_metrics(predictor, response, cutoff)
 }
 \arguments{
-\item{predictor}{A matrix containing values of the predictors}
+\item{predictor}{A matrix containing values of the predictors.}
 
-\item{response}{A vector containing values of the responses}
+\item{response}{A vector containing values of the responses.}
 
 \item{cutoff}{A double value - predictions greater than the cutoff are set to one, predictions less than the cutoff are set to zero.}
 }
