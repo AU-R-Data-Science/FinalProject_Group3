@@ -35,3 +35,15 @@ confusion_matrix_and_metrics <- function(predictor, response, cutoff) {
   
   return(list("Prevalence" = prevalence, "Accuracy" = accuracy, "Sensitivity" = sensitiviy, "Specificity" = specificity, "False Discovery Rate" = fdr, "Diagnostic Odds Ratio" = dor))
 }
+
+#plotting metrics starter function - with prevalence as example
+plot_metrics_starter_function <- function(predictor, response) {
+  plot_df <- data.frame(matrix(ncol = 2, nrow = 0))
+  colnames(plot_df) <- c("Cut_Off", "Prevalence")
+  
+  for(i in seq(from = 0.1, to = 0.9, by = 0.1)) {
+    plot_df[nrows(plot_df)+1, ] <- c(i, confusion_matrix_and_metrics(predictor, response, i)$Prevalence)
+    }
+  #this will give you a data frame with the specified metric for each cutoff value. plot data frame from here / repeat for all metrics listed
+}
+
