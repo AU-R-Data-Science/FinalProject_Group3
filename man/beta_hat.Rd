@@ -12,7 +12,7 @@ beta_hat(predictor, response)
 \item{response}{A vector containing values of the responses.}
 }
 \value{
-A vector containing the optimal set of coeffecients for logistic regression.
+A vector containing the optimal set of coefficients for logistic regression.
 }
 \description{
 This function generates optimal coefficients for logistic regression.

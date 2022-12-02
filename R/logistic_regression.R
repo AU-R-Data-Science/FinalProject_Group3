@@ -2,7 +2,18 @@ log_regression <- function(X, y, beta) {
   p <- 1 / (1 + exp(-X %*% beta))
   return(sum(-((1 - y) * log(1 - p)) - (y * log(p))))
 }
-
+#'Initial Coefficients for Logistic Regression
+#'
+#'@description
+#'This function generates the initial coefficients for logistic regression using the least squares formula.
+#'
+#'@param X An matrix containing the values of the predictors.
+#'@param y A vector containing the values of responses.
+#'
+#'@return A vector containing the initial values of the coefficients for logisitic regression
+#'
+#'@author Cole Kenney
+#'@export
 initial_beta_least_squares <- function(X, y) {
   return (solve(t(X) %*% X) %*% t(X) %*% y)
 }
@@ -82,7 +93,16 @@ confusion_matrix_and_metrics <- function(predictor, response, cutoff) {
 
 
 
-#plotting metrics starter function - with prevalence as example
+#' Plot (metric)
+#' 
+#' @description 
+#' This function plots (metric) over cutoff values from 0.1 to 0.9.
+#' 
+#' @param predictor A matrix containing values of the predictors.
+#' @param response A vector containing values of the responses.
+#' 
+#' @author (name)
+#' @export
 plot_metrics_starter_function <- function(predictor, response) {
   plot_df <- data.frame(matrix(ncol = 2, nrow = 0))
   colnames(plot_df) <- c("Cut_Off", "Prevalence")
@@ -90,5 +110,6 @@ plot_metrics_starter_function <- function(predictor, response) {
   for(i in seq(from = 0.1, to = 0.9, by = 0.1)) {
     plot_df[nrows(plot_df)+1, ] <- c(i, confusion_matrix_and_metrics(predictor, response, i)$prev)
     }
-  #this will give you a data frame with the specified metric for each cutoff value. plot data frame from here / repeat for all metrics listed
 }
+
+#Starter function for plotting confusion matrix metrics. Please create plotting code / edit descriptions / create function for each metric. Example is using prevalence.

@@ -2,3 +2,5 @@
 
 export(beta_hat)
 export(confusion_matrix_and_metrics)
+export(initial_beta_least_squares)
+export(plot_metrics_starter_function)
