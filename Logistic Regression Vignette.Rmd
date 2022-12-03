@@ -1,0 +1,162 @@
+---
+title: "Logistic Regression Package"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+The name of the GitHub Repository is `FinalProject_Group3` and the package name is the same.
+
+### Outputs
+Outputs will be computed from the `student.csv` dataset from Canvas.
+```{r}
+data <- read.csv("student.csv")
+data <- data[c(2:length(data))]
+num_rows <- nrow(data)
+head(data)
+```
+Under normal circumstances, I would perform pre-processing to determine which predictors should be used in the regression model. For simplicity in this Vignette, I will use the first three factors of the dataset (sex, age, and address).
+```{r}
+vars <- school ~ sex + age + address
+utils::str(m <- model.frame(vars, data))
+enumerated_df <- model.matrix(vars, m)
+```
+#### Creating training and test data for analysis
+```{r}
+sample <- sample(c(TRUE, FALSE), num_rows, replace = TRUE, prob = c(0.8, 0.2))
+train <- enumerated_df[sample, ]
+test <- enumerated_df[!sample, ]
+```
+
+```{r}
+y_hat <- train[, 1]
+X_hat <- train[, c(2, 3, 4)]
+```
+
+#### Initial Values for Optimization
+```{r}
+calculate_beta_initial <- function(y, X){
+  return((t(X)%*%X)**-1 %*% t(X) %*% y)
+}
+calculate_beta_initial(y_hat, X_hat)
+```
+```{r}
+calculate_loss_fn <- function(beta, y, X){
+  beta <- beta
+  y <- y
+  X <- X
+  sum <- 0
+  for(i in 1:length(y_hat)){
+    yi <- y[i]
+    Xi <- matrix(X[i ,])
+    pi <- 1/(1+exp(-t(Xi) %*% beta))
+    sum <- sum + (-yi * log(pi) - (1 - yi) * log(1 - pi))
+  }
+  return(sum)
+}
+
+beta_hat <- function(y, X) {
+  beta_est <- optim(calculate_beta_initial(y, X), calculate_loss_fn, y = y, X = X)$par
+  
+  output <- list("beta_hat" = beta_est, "response" = y, "predictors" = X)
+  class(output) = "lsoptim"
+
+  return(output)
+
+}
+```
+
+#### Fitting the model
+```{r}
+model <- beta_hat(y_hat, X_hat)
+model$beta_hat
+```
+#### Bootstrapping
+```{r}
+calculate_bootstraps <- function(N = 20, y, X){
+  B <- length(calculate_beta_initial(y, X))
+  beta_mat <- matrix(NA, nrow = 1, ncol = B)
+
+  for(n in 1:N){
+    boot_data <- enumerated_df[sample(1:nrow(enumerated_df), nrow(enumerated_df), replace = T) ,]
+    y_hat <- boot_data[,1]
+    X_hat <- boot_data[, c(2:4)]
+    model <- beta_hat(y_hat, X_hat)
+    beta_mat <- rbind(beta_mat, t(model[["beta_hat"]]))
+  }
+  n_row <- dim(beta_mat)[1]
+  beta_mat <- beta_mat[c(2:n_row),]
+  return(beta_mat)
+}
+
+bootstraps <- calculate_bootstraps(20, y_hat, X_hat)
+head(bootstraps)
+```
+
+```{r}
+bootstrap_cis <- function(alpha, bootstrap_matrix){
+    percent <- (1 - 2*alpha) * 100
+    num_betas <- dim(bootstrap_matrix)[2]
+    num_bootstraps <- dim(bootstrap_matrix)[1]
+    ci <- matrix(NA, nrow = 1, ncol = 2)
+    for(i in 1:num_betas){
+      sorted_vec <- sort(bootstrap_matrix[, i])
+      lb <- sorted_vec[ceiling(alpha * (num_bootstraps + 1))]
+      ub <- sorted_vec[ceiling((1-alpha) * (num_bootstraps + 1))]
+      ci <- rbind(ci, c(lb, ub))
+    }
+    return(ci[c(2:4),])
+}
+bootstrap_cis(0.05, bootstraps)
+```
+
+#### Plot of the fitted logistic curve 
+```{r}
+library(ggplot2)
+colnames <- c("intercept", "sexM", "age", "addressU")
+data <- data(col.names = colnames)
+#ggplot(enumerated_df, aes(x=intercept, y=age)) + geom_point() +
+#    stat_smooth(method="glm", color="green", se=FALSE,
+#      method.args = list(family=binomial))
+```
+
+#### Confusion Matrix
+```{r}
+confusion_matrix_and_metrics <- function(predictor, response, cutoff) {
+  optim_beta <- beta_hat(predictor, response)
+  p <- 1 / (1 + exp(-predictor %*% optim_beta))
+  predictions <- ifelse(p > cutoff, 1, 0)
+  
+  tp  <- sum((response == 1) & (predictions == 1))
+  tn  <- sum((response == 0) & (predictions == 0))
+  fp  <- sum((response == 0) & (predictions == 1))
+  fn  <- sum((response == 1) & (predictions == 0))
+  
+  p_predictions = tp + fp
+  n_predictions = tn + fn
+  total = p_predictions + n_predictions
+  
+  prevalence = p_predictions / total
+  accuracy = (tn + tp) / total
+  sensitiviy = tp/(tp + fn)
+  specificity = tn/(tn + fp)
+  fdr = fp/p_predictions
+  dor = (sensitivity/(1-specificity))/((1-sensitivity)/specificity)
+  
+  return(list("tp" = tp,
+              "tn" = tn,
+              "fp" = fp,
+              "fn" = fn,
+              "prev" = prevalence, 
+              "acc" = accuracy, 
+              "sens" = sensitiviy, 
+              "spec" = specificity, 
+              "fdr" = fdr, 
+              "dor" = dor))
+}
+```
+`prev` = Prevalence
+`acc` = Accuracy
+`sens` = Sensitivity
+`spec` = Specificity
+`fdr` = False Discovery Rate
+`dor` = Diagnostic Odds Ratio
