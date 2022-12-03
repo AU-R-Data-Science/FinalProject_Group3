@@ -1,26 +1,4 @@
 
-xx.data <- c(1,2,3,4,5,6,7,8,9)
-xx <- matrix(xx.data,nrow=9,ncol=1,byrow=TRUE)
-yye = xx
-yy  = xx
-rr = matrix(runif(9),nrow=9,ncol=1,byrow=TRUE)
-XX = matrix(0,nrow=9,ncol=2,byrow=TRUE)
-
-for (i in  1:9 ) {
-  yy[i] = xx[i]*xx[i] 
-  yye[i] = yy[i] + rr[i]*10
-  XX[i,1] = xx[i]
-  XX[i,2] = xx[i]*xx[i]
-}
-xx
-yye
-rr
-XX
-xhat = solve(t(XX) %*% XX ) %*% t(XX) %*%yye
-
-yhat = XX %*% xhat
-err = yhat - yye
-
 
 log_regression <- function(X, y, beta) {
   p <- 1 / (1 + exp(-X %*% beta))
@@ -60,23 +38,17 @@ beta_hat <- function(predictor, response) {
 }
 
 
-#fit logistic regression model
-model <- glm(vs ~ hp, data=mtcars, family=binomial)
 
-#define new data frame that contains predictor variable
-newdata <- data.frame(hp=seq(min(mtcars$hp), max(mtcars$hp),len=500))
-
-#use fitted model to predict values of vs
-newdata$vs = predict(model, newdata, type="response")
-
+# author: Juliet Petrisor
 #plot logistic regression curve
-plot(vs ~ hp, data=mtcars, col="steelblue")
-lines(vs ~ hp, newdata, lwd=2)
-
-
-plot <- function(){
-  
+plot_log <- function(beta_hat,predictor, response){
+  newdata<- predict(beta_hat, predictor, type="response")
+  plot(predictor, response)
+  lines(predictor, newdata)
 }
+
+plot( ~ hp, data=mtcars, col="steelblue")
+lines( ~ hp, newdata, lwd=2)
 
 
 
