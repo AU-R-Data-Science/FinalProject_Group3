@@ -47,8 +47,6 @@ plot_log <- function(beta_hat,predictor, response){
   lines(predictor, newdata)
 }
 
-plot( ~ hp, data=mtcars, col="steelblue")
-lines( ~ hp, newdata, lwd=2)
 
 
 
@@ -118,20 +116,26 @@ confusion_matrix_and_metrics <- function(predictor, response, cutoff) {
 #' 
 #' @param predictor A matrix containing values of the predictors.
 #' @param response A vector containing values of the responses.
+#' @param metric_name A metric such as tp
 #' 
-#' @author (name)
+#' 
+#' @author (Juliet Petrisor)
 #' @export
-plot_metrics_starter_function <- function(predictor, response) {
+plot_metrics_starter_function <- function(predictor, response, metric_name) {
   plot_df <- data.frame(matrix(ncol = 2, nrow = 0))
-  colnames(plot_df) <- c("Cut_Off", "Prevalence")
+  colnames(plot_df) <- c("Cut_Off", metric_name)
   
   for(i in seq(from = 0.1, to = 0.9, by = 0.1)) {
-    plot_df[nrows(plot_df)+1, ] <- c(i, confusion_matrix_and_metrics(predictor, response, i)$prev)
+    plot_df[nrows(plot_df)+1, ] <- c(i, confusion_matrix_and_metrics(predictor, response, i)$metric_name)
   }
   
   #plot data frame here
+  plot(predictor, plot_df) 
 }
+
 
 # Starter function for plotting confusion matrix metrics. 
 # Please create plotting code / edit descriptions /
-# create function for each metric. Example is using prevalence.
+# create function for each metric. (you dont need a 
+# different function from each metric)
+#Example is using prevalence.
